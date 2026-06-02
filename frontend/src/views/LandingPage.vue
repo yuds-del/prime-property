@@ -204,7 +204,7 @@
             Prime Property merupakan pionir platform agensi manajemen aset yang berdedikasi tinggi dalam menyediakan
             kurasi ruko komersial serta villa eksklusif di wilayah strategis Indonesia.
           </p>
-          <router-link to="/about" class="inline-block text-[#C9A961] text-xs font-bold uppercase border-b border-[#C9A961] pb-1 hover:text-white hover:border-white transition">Baca Selengkapnya →</router-link>
+          <router-link to="/about" class="inline-block text-[#C9A961] text-xs font-bold uppercase border-b border-[#C9A961] pb-1 hover:text-white hover:border-white transition">Baca Selengkapnya </router-link>
         </div>
         <div
           class="bg-gradient-to-br from-zinc-900 to-black text-white p-10 rounded-xl border border-zinc-800 border-l-4 border-l-[#C9A961] shadow-xl text-left relative overflow-hidden">

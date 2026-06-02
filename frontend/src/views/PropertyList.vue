@@ -145,7 +145,7 @@
               Rp {{ item.price.toLocaleString('id-ID') }}
             </td>
             <td class="py-3.5 px-4 text-center">
-              <span v-if="item.carport" class="text-emerald-400 font-semibold">✔ Ya</span>
+              <span v-if="item.carport" class="text-emerald-400 font-semibold"> Ya</span>
               <span v-else class="text-zinc-600">—</span>
             </td>
             <td class="py-3.5 px-4 text-center space-y-1">
@@ -192,7 +192,7 @@
       <div class="bg-zinc-900 rounded-xl shadow-2xl max-w-2xl w-full p-6 space-y-4 border border-zinc-800">
         <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
           <h2 class="text-base font-bold text-white flex items-center space-x-2">
-            <span class="text-[#C9A961]">●</span>
+            <span class="text-[#C9A961]"></span>
             <span>{{ isEditMode ? 'Edit Data Properti' : 'Tambah Properti Baru' }}</span>
           </h2>
           <button @click="isFormTerbuka = false" class="text-zinc-400 hover:text-white text-xl">&times;</button>

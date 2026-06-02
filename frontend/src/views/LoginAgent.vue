@@ -55,7 +55,7 @@
             <input 
               v-model="loginForm.password" 
               :type="showPassword ? 'text' : 'password'" 
-              placeholder="••••••••" 
+              placeholder="password" 
               class="w-full p-3.5 pl-4 pr-12 bg-zinc-950 border border-zinc-800 rounded-xl text-sm text-white focus:border-[#C9A961] transition outline-none" 
               required 
             />
@@ -86,7 +86,7 @@
 
       <div class="mt-8 text-center">
         <router-link to="/" class="text-xs text-zinc-500 hover:text-zinc-300 transition">
-          ← Kembali ke Halaman Publik
+           Kembali ke Halaman Publik
         </router-link>
       </div>
 
