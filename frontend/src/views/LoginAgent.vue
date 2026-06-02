@@ -118,7 +118,7 @@ const triggerToast = (msg, type = 'success') => {
 }
 
 const getCsrfToken = async () => {
-  const res = await fetch('http://localhost:3000/api/auth/csrf-token', { credentials: 'include' });
+  const res = await fetch('/api/auth/csrf-token', { credentials: 'include' });
   if (!res.ok) {
     const text = await res.text();
     console.error("Server Error Page:", text);
@@ -140,7 +140,7 @@ const handleLoginSubmit = async () => {
   try {
     const token = await getCsrfToken();
     // Menembak ke backend Express di port 3000
-    const response = await fetch('http://localhost:3000/api/auth/login', {
+    const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

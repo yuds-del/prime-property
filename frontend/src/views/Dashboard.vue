@@ -115,9 +115,8 @@ const stats = ref({
 
 const fetchStats = async () => {
   try {
-    // Kita panggil API statistik yang baru kita buat di server.js
-    const res = await fetch('http://localhost:3000/api/properties/stats')
-    const data = await res.json()
+  const res = await fetch('/api/properties/stats')
+const data = await res.json()
     
     // Update data dashboard dengan respon dari database
     stats.value = {

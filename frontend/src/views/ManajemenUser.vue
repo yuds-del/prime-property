@@ -1,11 +1,7 @@
 <template>
     <div class="space-y-6">
         <!-- Toast Notification -->
-        <NotificationToast 
-            :show="toast.show" 
-            :message="toast.message" 
-            :type="toast.type" 
-            @close="toast.show = false" />
+        <NotificationToast :show="toast.show" :message="toast.message" :type="toast.type" @close="toast.show = false" />
 
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-white">Manajemen Akun Internal</h1>
@@ -57,7 +53,8 @@
                     class="w-full bg-zinc-900 border border-zinc-700 p-2 text-white rounded">
                 <input v-model="newUser.password" type="password" placeholder="Password"
                     class="w-full bg-zinc-900 border border-zinc-700 p-2 text-white rounded">
-                <select v-model="newUser.role_id" class="w-full bg-zinc-900 border border-zinc-700 p-2 text-white rounded">
+                <select v-model="newUser.role_id"
+                    class="w-full bg-zinc-900 border border-zinc-700 p-2 text-white rounded">
                     <option :value="2">Agent</option>
                     <option :value="1">Superadmin</option>
                 </select>
@@ -90,9 +87,9 @@ const selectedUserId = ref(null)
 const toast = reactive({ show: false, message: '', type: 'success' })
 
 const getCsrfToken = async () => {
-  const res = await fetch('http://localhost:3000/api/auth/csrf-token', { credentials: 'include' });
-  const data = await res.json();
-  return data.token;
+    const res = await fetch('/api/auth/csrf-token', { credentials: 'include' });
+    const data = await res.json();
+    return data.token;
 };
 
 const triggerToast = (msg, type = 'success') => {
@@ -104,7 +101,7 @@ const triggerToast = (msg, type = 'success') => {
 
 // Fungsi Ambil Data
 const fetchUsers = async () => {
-    const res = await fetch('http://localhost:3000/api/users', { credentials: 'include' })
+    const res = await fetch('/api/users', { credentials: 'include' })
     users.value = await res.json() // This GET request is less critical, but for consistency, it's good to change
 }
 
@@ -115,9 +112,9 @@ const tambahUser = async () => {
     if (!newUser.value.nama_lengkap || !newUser.value.email || !newUser.value.password) {
         return triggerToast('Semua field wajib diisi!', 'error')
     }
-    
+
     const token = await getCsrfToken();
-    const res = await fetch('http://localhost:3000/api/users', {
+    const res = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-csrf-token': token },
         credentials: 'include',
@@ -138,7 +135,7 @@ const tambahUser = async () => {
 const toggleRole = async (user) => {
     const newRoleId = user.role_id === 1 ? 2 : 1
     const token = await getCsrfToken();
-    const res = await fetch(`http://localhost:3000/api/users/${user.id}/role`, {
+    const res = await fetch(`/api/users/${user.id}/role`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'x-csrf-token': token },
         credentials: 'include',
@@ -163,7 +160,7 @@ const confirmHapus = (id) => {
 
 const handleConfirm = async () => {
     const token = await getCsrfToken();
-    const res = await fetch(`http://localhost:3000/api/users/${selectedUserId.value}`, {
+    const res = await fetch(`/api/users/${selectedUserId.value}`, {
         method: 'DELETE',
         headers: { 'x-csrf-token': token },
         credentials: 'include'

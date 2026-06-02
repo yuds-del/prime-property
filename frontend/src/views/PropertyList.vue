@@ -395,9 +395,9 @@ const toast = reactive({ show: false, message: '', type: 'success' })
 const modal = reactive({ show: false, title: '', message: '', actionType: null, targetId: null })
 
 const getCsrfToken = async () => {
-  const res = await fetch('http://localhost:3000/api/auth/csrf-token', { credentials: 'include' });
-  const data = await res.json();
-  return data.token;
+ const res = await fetch('/api/auth/csrf-token', { credentials: 'include' });
+const data = await res.json();
+return data.token;
 };
 
 // Inisialisasi form
@@ -458,10 +458,7 @@ const fetchProperties = async () => {
     // Sinkronisasi ke URL (AC-7.2)
     router.replace({ query: Object.fromEntries(params) });
 
-    const res = await fetch(`http://localhost:3000/api/properties?${params}`, {
-      method: 'GET',
-      credentials: 'include' // PENTING: Agar cookie role_id terkirim
-    })
+    
     const result = await res.json()
     properties.value = result.data
     totalData.value = result.total
@@ -504,8 +501,8 @@ const simpanProperti = async () => {
 
   if (hasError) return;
 
-  const url = isEditMode.value ? `http://localhost:3000/api/properties/${editId.value}` : 'http://localhost:3000/api/properties'
-  const method = isEditMode.value ? 'PUT' : 'POST'
+  const url = isEditMode.value ? `/api/properties/${editId.value}` : '/api/properties'
+const method = isEditMode.value ? 'PUT' : 'POST'
 
   const token = await getCsrfToken();
 
@@ -540,11 +537,11 @@ const hapusProperti = async (id) => {
 
 const hapusPropertiAction = async (id) => {
   const token = await getCsrfToken();
-  await fetch(`http://localhost:3000/api/properties/${id}`, { 
-    method: 'DELETE',
-    headers: { 'x-csrf-token': token },
-    credentials: 'include'
-  })
+await fetch(`/api/properties/${id}`, { 
+  method: 'DELETE',
+  headers: { 'x-csrf-token': token },
+  credentials: 'include'
+})
   triggerToast('Aset telah dipindahkan ke arsip.');
   fetchProperties()
 }
@@ -559,11 +556,11 @@ const restoreProperti = async (id) => {
 
 const restorePropertiAction = async (id) => {
   const token = await getCsrfToken();
-  await fetch(`http://localhost:3000/api/properties/restore/${id}`, { 
-    method: 'PUT',
-    headers: { 'x-csrf-token': token },
-    credentials: 'include'
-  })
+await fetch(`/api/properties/restore/${id}`, { 
+  method: 'PUT',
+  headers: { 'x-csrf-token': token },
+  credentials: 'include'
+})
   triggerToast('Aset berhasil dipulihkan.');
   fetchProperties()
 }

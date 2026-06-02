@@ -192,9 +192,9 @@ const triggerToast = (msg, type = 'success') => {
 const logoutAction = async () => {
   modal.show = false
   try {
-    const res = await fetch('http://localhost:3000/api/auth/logout', { 
-      method: 'POST', 
-      credentials: 'include' 
+   const res = await fetch('/api/auth/logout', { 
+    method: 'POST', 
+    credentials: 'include'
     });
     if (res.ok) {
       localStorage.removeItem('user')

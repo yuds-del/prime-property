@@ -138,7 +138,7 @@ const contactForm = reactive({
 
 // AC-9.2: Mengambil token CSRF agar request POST diizinkan oleh backend
 const getCsrfToken = async () => {
-  const res = await fetch('http://localhost:3000/api/auth/csrf-token', { credentials: 'include' });
+  const res = await fetch('/api/auth/csrf-token', { credentials: 'include' });
   if (!res.ok) {
     throw new Error("Gagal mengambil token keamanan.");
   }
@@ -159,7 +159,7 @@ const handleFormSubmit = async () => {
     // 1. Ambil token CSRF terlebih dahulu
     const token = await getCsrfToken();
 
-    const res = await fetch('http://localhost:3000/api/contact', {
+   const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

@@ -298,7 +298,7 @@ const fetchProperties = async () => {
   isLoading.value = true
   try {
     // Menggunakan endpoint featured yang mengembalikan array sederhana (max 3)
-    const res = await fetch('http://localhost:3000/api/properties/featured')
+    const res = await fetch('/api/properties/featured')
     if (res.ok) {
       const data = await res.json()
       properties.value = data
@@ -313,7 +313,7 @@ const fetchProperties = async () => {
 // 4. FUNGSI SUBMIT
 const handleFormSubmit = async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/contact', {
+    const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(contactForm)
