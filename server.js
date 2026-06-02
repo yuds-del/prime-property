@@ -9,7 +9,10 @@ const { doubleCsrf } = require("csrf-csrf");
 
 const app = express();
 
-// Konfigurasi Database (Dipindah ke atas agar diakses helper dengan aman)
+// === FIX 1: AKTIFKAN TRUST PROXY UNTUK PROV-RAILWAY AGAR RATE-LIMIT TIDAK CRASH ===
+app.set('trust proxy', 1);
+
+// Konfigurasi Database
 const db = mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
@@ -18,8 +21,12 @@ const db = mysql.createConnection({
 });
 
 db.connect((err) => {
-    if (err) console.error('Database error:', err);
-    else console.log('Terhubung ke database XAMPP!');
+    if (err) {
+        console.error('Database error:', err);
+    } else {
+        // Fix string log biar gak bikin bingung
+        console.log(`Terhubung ke database: ${process.env.DB_NAME || 'prime_property'} di ${process.env.DB_HOST || 'localhost'}`);
+    }
 });
 
 // AC-9.2: Global Rate Limiting (100 req/menit)
@@ -56,15 +63,14 @@ const csrfUtils = doubleCsrf({
     getSecret: () => process.env.CSRF_SECRET || "prime-property-very-secret-key-2026",
     cookieName: "x-csrf-token",
     cookieOptions: {
-        httpOnly: false, // Harus false agar JS frontend bisa membaca cookie ini untuk dikirim balik via header
+        httpOnly: false, 
         sameSite: "Lax",
         secure: process.env.NODE_ENV === "production",
     },
     getSessionIdentifier: (req) => req.cookies.user_id || "anonymous-session",
-    getTokenFromRequest: (req) => req.headers["x-csrf-token"], // Header yang diharapkan dari frontend
+    getTokenFromRequest: (req) => req.headers["x-csrf-token"], 
 });
 
-// Ekstrak middleware dan fungsi generator secara aman
 const doubleCsrfProtection = csrfUtils.doubleCsrfProtection;
 const csrfTokenGenerator = csrfUtils.generateToken || csrfUtils.doubleCsrfToken || csrfUtils.generateCsrfToken;
 
@@ -78,11 +84,6 @@ app.get("/api/auth/csrf-token", (req, res) => {
     }
     res.json({ token: csrfTokenGenerator(req, res) });
 });
-
-// Rute dasar untuk mengecek status server
-// app.get('/', (req, res) => {
-//     res.json({ message: "Prime Property API berjalan dengan baik", status: "OK" });
-// });
 
 // Error handler khusus untuk kegagalan validasi CSRF
 app.use((error, req, res, next) => {
@@ -118,7 +119,6 @@ app.post('/api/auth/login', authLimiter, doubleCsrfProtection, (req, res) => {
     const email = req.body.email?.trim();
     const password = req.body.password;
     
-    // AC-9.2: Menggunakan password hashing (bcrypt)
     const sql = "SELECT * FROM users WHERE email = ?";
     
     db.query(sql, [email], async (err, results) => {
@@ -130,7 +130,6 @@ app.post('/api/auth/login', authLimiter, doubleCsrfProtection, (req, res) => {
         if (results.length > 0) {
             const user = results[0];
 
-            // AC-5.1: Cek apakah akun sedang di-lockout
             if (user.locked_until && new Date(user.locked_until) > new Date()) {
                 const remainingTime = Math.ceil((new Date(user.locked_until) - new Date()) / 1000 / 60);
                 console.log(`[AUTH] Akun ${user.email} DITOLAK: Masih terkunci ${remainingTime} menit.`);
@@ -140,7 +139,6 @@ app.post('/api/auth/login', authLimiter, doubleCsrfProtection, (req, res) => {
             }
 
             try {
-                // AC-9.2: Bandingkan password input dengan hash di database
                 console.log(`[DEBUG] Password Input: "${password}" | Panjang: ${password?.length}`);
                 console.log(`[DEBUG] Hash di DB: "${user.password}" | Panjang: ${user.password?.length}`);
 
@@ -148,8 +146,6 @@ app.post('/api/auth/login', authLimiter, doubleCsrfProtection, (req, res) => {
                 
                 if (match) {
                     console.log(`[AUTH] Login Berhasil: ${user.email}`);
-                    // AC-5.1: Reset failed attempts jika login berhasil
-                    // Menggunakan COALESCE atau memastikan nilai tidak NULL saat reset
                     db.query("UPDATE users SET failed_attempts = 0, locked_until = NULL WHERE id = ?", [user.id], (uErr) => {
                         if (uErr) console.error("Gagal reset login attempts:", uErr.message);
                     });
@@ -169,7 +165,6 @@ app.post('/api/auth/login', authLimiter, doubleCsrfProtection, (req, res) => {
                         user: { id: user.id, nama_lengkap: user.nama_lengkap, role_id: user.role_id }
                     });
                 } else {
-                    // AC-5.1: Update jumlah kegagalan dan cek ambang batas (5x)
                     const newAttempts = (user.failed_attempts || 0) + 1;
                     let lockSql = "UPDATE users SET failed_attempts = ? WHERE id = ?";
                     if (newAttempts >= 5) {
@@ -198,15 +193,13 @@ app.post('/api/auth/logout', (req, res) => {
     res.json({ message: "Logout Berhasil" });
 });
 
-// AC-4.2: Endpoint Form Kontak dengan Rate Limit
 app.post('/api/contact', contactLimiter, doubleCsrfProtection, (req, res) => {
     const { nama, email, phone, pesan } = req.body;
     console.log(`Notifikasi Email Admin: Pesan baru dari ${nama} (${email})`);
     res.json({ message: "Pesan terkirim, tim kami akan menghubungi Anda." });
 });
 
-// --- RUTE MANAJEMEN USER (AC-5.2) ---
-
+// --- RUTE MANAJEMEN USER ---
 app.get('/api/users', authorizeSuperadmin, (req, res) => {
     const sql = "SELECT id, nama_lengkap, email, role_id, created_at FROM users";
     db.query(sql, (err, results) => {
@@ -217,10 +210,7 @@ app.get('/api/users', authorizeSuperadmin, (req, res) => {
 
 app.post('/api/users', authorizeSuperadmin, doubleCsrfProtection, async (req, res) => {
     const { nama_lengkap, email, password, role_id } = req.body;
-    
-    // Hash password sebelum disimpan
     const hashedPassword = await bcrypt.hash(password, 10);
-    
     const sql = "INSERT INTO users (nama_lengkap, email, password, role_id) VALUES (?, ?, ?, ?)";
     db.query(sql, [nama_lengkap, email, hashedPassword, role_id], (err, result) => {
         if (err) return res.status(500).json({ message: "Gagal tambah user", error: err });
@@ -251,21 +241,15 @@ app.patch('/api/users/:id/role', authorizeSuperadmin, doubleCsrfProtection, (req
 });
 
 // --- RUTE PROPERTI ---
-
-// Get Semua Properti
 app.get('/api/properties', (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
     const showArchived = req.query.archived === 'true';
     const offset = (page - 1) * limit;
 
-    // AC-8.3: Filter berdasarkan deleted_at (Active vs Archived)
     let sql = `SELECT SQL_CALC_FOUND_ROWS * FROM properties WHERE ${showArchived ? 'deleted_at IS NOT NULL' : 'deleted_at IS NULL'}`;
     const queryParams = [];
-    // ... (filter yang sudah ada sebelumnya tetap di sini)
 
-    // Filter Kawasan (Multi-select)
-    // Mendukung format ?kawasan=Krakatau,Pancing atau ?kawasan=Krakatau&kawasan=Pancing
     if (req.query.kawasan) {
         const kawasanArr = (Array.isArray(req.query.kawasan) ? req.query.kawasan : req.query.kawasan.split(','))
             .map(s => s.trim()).filter(s => s !== "");
@@ -275,7 +259,6 @@ app.get('/api/properties', (req, res) => {
         }
     }
 
-    // Filter Hadap (Multi-select)
     if (req.query.hadap) {
         const hadapArr = (Array.isArray(req.query.hadap) ? req.query.hadap : req.query.hadap.split(','))
             .map(s => s.trim()).filter(s => s !== "");
@@ -285,19 +268,16 @@ app.get('/api/properties', (req, res) => {
         }
     }
 
-    // AC-7.2: Filter Lebar Minimal
     if (req.query.lebar_min) {
         sql += ' AND lebar >= ?';
         queryParams.push(req.query.lebar_min);
     }
 
-    // AC-7.2: Filter Harga Maksimal
     if (req.query.price_max) {
         sql += ' AND price <= ?';
         queryParams.push(req.query.price_max);
     }
 
-    // AC-7.2: Filter Tipe & Status
     if (req.query.tipe) {
         sql += ' AND tipe = ?';
         queryParams.push(req.query.tipe);
@@ -307,32 +287,27 @@ app.get('/api/properties', (req, res) => {
         queryParams.push(req.query.status);
     }
 
-    // AC-7.2: Filter Siap (Multi-select)
     if (req.query.siap) {
         const siapArr = (Array.isArray(req.query.siap) ? req.query.siap : req.query.siap.split(','));
         sql += ' AND siap IN (?)';
         queryParams.push(siapArr);
     }
 
-    // AC-7.2: Filter Carport
     if (req.query.carport !== undefined && req.query.carport !== 'all') {
         sql += ' AND carport = ?';
         queryParams.push(req.query.carport === 'true' ? 1 : 0);
     }
 
-    // Search Bar (Free-text untuk Nama, Group, dan Kawasan sesuai AC-7.2)
     if (req.query.search) {
         sql += ' AND (nama_property LIKE ? OR `group` LIKE ? OR kawasan LIKE ?)';
         const searchVal = `%${req.query.search}%`;
         queryParams.push(searchVal, searchVal, searchVal);
     }
 
-    // AC-7.1: Mendukung Sorting Dinamis
     const validSortFields = ['nama_property', 'price', 'created_at', 'status'];
     const sortBy = validSortFields.includes(req.query.sortBy) ? req.query.sortBy : 'created_at';
     const order = req.query.order === 'asc' ? 'ASC' : 'DESC';
     
-    // Jika sort berdasarkan nama, gunakan backtick karena group adalah reserved word
     const sortColumn = sortBy === 'group' ? `\`group\`` : sortBy;
     
     sql += ` ORDER BY ${sortColumn} ${order} LIMIT ? OFFSET ?`;
@@ -344,7 +319,6 @@ app.get('/api/properties', (req, res) => {
             return res.status(500).json({ message: "Gagal ambil data", error: err.message });
         }
         
-        // Ambil total baris untuk pagination frontend
         db.query('SELECT FOUND_ROWS() as total', (err2, countRes) => {
             res.json({
                 data: results,
@@ -356,7 +330,6 @@ app.get('/api/properties', (req, res) => {
     });
 });
 
-// Rute Baru: Landing Page Featured (Ambil 3 data in_stock terbaru)
 app.get('/api/properties/featured', (req, res) => {
     const sql = `SELECT * FROM properties 
                  WHERE status = 'in_stock' AND deleted_at IS NULL 
@@ -367,12 +340,10 @@ app.get('/api/properties/featured', (req, res) => {
     });
 });
 
-// Rute POST: Menambahkan field unit dan created_by (AC-6.1)
 app.post('/api/properties', authorizeSuperadmin, doubleCsrfProtection, (req, res) => {
     const { nama_property, group, kawasan, tipe, lebar, panjang, hadap, tingkat, carport, price, status, siap, maps_link, unit } = req.body;
-    const created_by = req.cookies.user_id; // Mengambil ID dari cookie session
+    const created_by = req.cookies.user_id;
 
-    // AC-8.4: Server-side Validation
     if (!nama_property || nama_property.length < 3 || nama_property.length > 100) {
         return res.status(400).json({ message: "Nama properti harus 3-100 karakter." });
     }
@@ -382,7 +353,6 @@ app.post('/api/properties', authorizeSuperadmin, doubleCsrfProtection, (req, res
     if (lebar <= 0 || panjang <= 0) {
         return res.status(400).json({ message: "Dimensi harus lebih dari 0." });
     }
-    // AC-8.4: Validasi Tingkat (max 10)
     if (tingkat < 1 || tingkat > 10) {
         return res.status(400).json({ message: "Jumlah tingkat harus antara 1 sampai 10." });
     }
@@ -408,12 +378,10 @@ app.post('/api/properties', authorizeSuperadmin, doubleCsrfProtection, (req, res
     });
 });
 
-// Rute PUT: Update data properti
 app.put('/api/properties/:id', authorizeSuperadmin, doubleCsrfProtection, async (req, res) => {
     const { id } = req.params;
     const { nama_property, group, kawasan, tipe, lebar, panjang, hadap, tingkat, carport, price, status, siap, maps_link, unit } = req.body;
 
-    // AC-8.4: Server-side Validation (Update)
     if (!nama_property || nama_property.length < 3 || nama_property.length > 100) {
         return res.status(400).json({ message: "Nama properti harus 3-100 karakter." });
     }
@@ -430,7 +398,6 @@ app.put('/api/properties/:id', authorizeSuperadmin, doubleCsrfProtection, async 
         return res.status(400).json({ message: "Link Maps harus berasal dari domain google.com/maps" });
     }
 
-    // AC-8.2: Ambil data lama untuk audit log "what changed"
     db.query('SELECT * FROM properties WHERE id = ?', [id], (oldErr, oldResults) => {
         if (oldErr || oldResults.length === 0) return res.status(404).json({ message: "Data tidak ditemukan" });
         const oldData = oldResults[0];
@@ -456,7 +423,6 @@ app.put('/api/properties/:id', authorizeSuperadmin, doubleCsrfProtection, async 
     });
 });
 
-// Rute DELETE
 app.delete('/api/properties/:id', authorizeSuperadmin, doubleCsrfProtection, (req, res) => {
     const sql = 'UPDATE properties SET deleted_at = NOW() WHERE id = ?';
     const { id } = req.params;
@@ -467,7 +433,6 @@ app.delete('/api/properties/:id', authorizeSuperadmin, doubleCsrfProtection, (re
     });
 });
 
-// AC-8.3: Restore Properti (Hanya Superadmin)
 app.put('/api/properties/restore/:id', authorizeSuperadmin, doubleCsrfProtection, (req, res) => {
     const sql = 'UPDATE properties SET deleted_at = NULL WHERE id = ?';
     const { id } = req.params;
@@ -478,7 +443,6 @@ app.put('/api/properties/restore/:id', authorizeSuperadmin, doubleCsrfProtection
     });
 });
 
-// Rute Statistik
 app.get('/api/properties/stats', (req, res) => {
     const sql = `
         SELECT 
@@ -492,7 +456,6 @@ app.get('/api/properties/stats', (req, res) => {
         WHERE deleted_at IS NULL
     `;
     
-    // Mengambil top 3 kawasan secara dinamis untuk dashboard
     const sqlKawasan = `
         SELECT kawasan, COUNT(*) as count 
         FROM properties WHERE deleted_at IS NULL AND status = 'in_stock'
@@ -508,11 +471,8 @@ app.get('/api/properties/stats', (req, res) => {
 });
 
 const path = require('path');
-
-// Serve file statis dari folder frontend/dist hasil build Vue
 app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
-// Tangani semua routing halaman frontend (Biar /agent/login ga error 404 pas di-refresh)
 app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
 });
