@@ -106,5 +106,5 @@ Sebelum memulai, pastikan Anda telah menginstal:
 ---
 
 &copy; 2026 Prime Property Hub. Developed with  for Precision Asset Management.
-```
+
 
