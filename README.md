@@ -51,7 +51,7 @@ Sebelum memulai, pastikan Anda telah menginstal:
 
 1. **Clone repositori:**
    ```bash
-   git clone <https://github.com/username/prime-property.git>
+   git clone <https://github.com/yuds-del/prime-property.git>
    cd prime-property
    ```
 
