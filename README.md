@@ -100,10 +100,10 @@ Sebelum memulai, pastikan Anda telah menginstal:
    Akses aplikasi di `http://localhost:5173`.
 
 ##  Akun Demo (Jika Menggunakan Seed Data)
-- **Superadmin**: `yuds@yuds.my.id` / `password123`
-- **Agent**: `tira@yuds.my.id` / `password123`
 
----
+link demo : https://prime-property-production.up.railway.app
+link demo login : https://prime-property-production.up.railway.app/agent/login
+
 
 &copy; 2026 Prime Property Hub. Developed with  for Precision Asset Management.
 
