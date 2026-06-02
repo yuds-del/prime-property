@@ -513,7 +513,7 @@ const path = require('path');
 app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
 // Tangani semua routing halaman frontend (Biar /agent/login ga error 404 pas di-refresh)
-app.get('/:splat*', (req, res) => {
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
 });
 
