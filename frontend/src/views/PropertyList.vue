@@ -457,7 +457,9 @@ const fetchProperties = async () => {
     
     // Sinkronisasi ke URL (AC-7.2)
     router.replace({ query: Object.fromEntries(params) });
-
+    const res = await fetch(`/api/properties?${params.toString()}`, {
+      credentials: 'include'
+    });
     
     const result = await res.json()
     properties.value = result.data
