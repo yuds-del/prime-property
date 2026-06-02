@@ -25,7 +25,7 @@ Proyek ini mengimplementasikan standar keamanan industri:
 - **Rate Limiting**: Perlindungan berlapis pada level global, autentikasi, dan formulir kontak.
 - **Secure Cookies**: Pengaturan `HttpOnly` dan `SameSite: Lax` untuk manajemen sesi yang aman.
 
-## 🚀 Teknologi yang Digunakan
+##  Teknologi yang Digunakan
 
 **Backend:**
 - Node.js & Express
@@ -108,6 +108,3 @@ Sebelum memulai, pastikan Anda telah menginstal:
 &copy; 2026 Prime Property Hub. Developed with  for Precision Asset Management.
 ```
 
-<!--
-[PROMPT_SUGGESTION]Bantu saya membuat script SQL untuk initial seed data user dan properti[/PROMPT_SUGGESTION]
-[PROMPT_SUGGESTION]Bagaimana cara melakukan deployment project ini ke layanan hosting VPS?[/PROMPT_SUGGESTION]
