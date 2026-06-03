@@ -7,17 +7,15 @@
     </div>
 
     <!-- Notification Toast -->
-    <NotificationToast 
-      :show="toast.show" 
-      :message="toast.message" 
-      :type="toast.type" 
-      @close="toast.show = false" />
+    <NotificationToast :show="toast.show" :message="toast.message" :type="toast.type" @close="toast.show = false" />
 
     <!-- Header Publik (Konsisten dengan AC-2.3) -->
-    <header class="bg-[#1A1A1A]/90 backdrop-blur-md fixed top-0 left-0 right-0 z-50 border-b border-zinc-800 px-6 md:px-12 py-3 flex justify-between items-center shadow-lg">
+    <header
+      class="bg-[#1A1A1A]/90 backdrop-blur-md fixed top-0 left-0 right-0 z-50 border-b border-zinc-800 px-6 md:px-12 py-3 flex justify-between items-center shadow-lg">
       <div class="flex items-center space-x-10">
         <router-link to="/" class="flex items-center space-x-3 group">
-          <img src="../assets/logo-prime-property.png" alt="Prime Property Logo" class="h-9 w-auto object-contain transition-transform group-hover:scale-105" />
+          <img src="../assets/logo-prime-property.png" alt="Prime Property Logo"
+            class="h-9 w-auto object-contain transition-transform group-hover:scale-105" />
           <span class="text-xl font-black tracking-wider text-white uppercase">
             PRIME <span class="text-[#C9A961]">PROPERTY</span>
           </span>
@@ -40,11 +38,15 @@
     <transition name="fade">
       <div v-if="isMenuOpen" class="fixed inset-0 z-[100] md:hidden">
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="isMenuOpen = false"></div>
-        <div class="fixed top-20 right-4 w-64 rounded-2xl bg-[#1A1A1A] border border-zinc-800 shadow-2xl p-6 flex flex-col space-y-6">
+        <div
+          class="fixed top-20 right-4 w-64 rounded-2xl bg-[#1A1A1A] border border-zinc-800 shadow-2xl p-6 flex flex-col space-y-6">
           <nav class="flex flex-col space-y-4">
-            <router-link to="/" @click="isMenuOpen = false" class="text-sm font-bold text-zinc-300 hover:text-[#C9A961]">Beranda</router-link>
-            <router-link to="/about" @click="isMenuOpen = false" class="text-sm font-bold text-zinc-300 hover:text-[#C9A961]">Tentang Kami</router-link>
-            <router-link to="/contact" @click="isMenuOpen = false" class="text-sm font-bold text-[#C9A961]">Kontak</router-link>
+            <router-link to="/" @click="isMenuOpen = false"
+              class="text-sm font-bold text-zinc-300 hover:text-[#C9A961]">Beranda</router-link>
+            <router-link to="/about" @click="isMenuOpen = false"
+              class="text-sm font-bold text-zinc-300 hover:text-[#C9A961]">Tentang Kami</router-link>
+            <router-link to="/contact" @click="isMenuOpen = false"
+              class="text-sm font-bold text-[#C9A961]">Kontak</router-link>
           </nav>
         </div>
       </div>
@@ -59,25 +61,22 @@
         </p>
       </div>
 
-       <!-- Map Section (Baru ditambahkan) -->
+      <!-- Map Section (Baru ditambahkan) -->
       <div class="mt-12 bg-zinc-900 p-4 rounded-2xl border border-zinc-800 shadow-2xl overflow-hidden">
         <div class="mb-4 px-2">
           <h3 class="text-[#C9A961] text-xs font-black uppercase tracking-widest">Lokasi Kantor Pusat</h3>
         </div>
-        <div class="w-full h-80 rounded-xl overflow-hidden grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-700">
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.275330368305!2d106.80629227585501!3d-6.227382060986794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f15049383637%3A0x6b4999f8d098e983!2sSCBD!5e0!3m2!1sid!2sid!4v1715850000000!5m2!1sid!2sid" 
-            width="100%" 
-            height="100%" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy" 
+        <div
+          class="w-full h-80 rounded-xl overflow-hidden grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-700">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.275330368305!2d106.80629227585501!3d-6.227382060986794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f15049383637%3A0x6b4999f8d098e983!2sSCBD!5e0!3m2!1sid!2sid!4v1715850000000!5m2!1sid!2sid"
+            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
             referrerpolicy="no-referrer-when-downgrade">
           </iframe>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
         <!-- Info Kontak -->
         <div class="space-y-6">
           <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800 shadow-xl">
@@ -111,7 +110,7 @@
                   placeholder="email@anda.com">
               </div>
             </div>
-            
+
             <div class="space-y-1.5">
               <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Nomor HP / WhatsApp</label>
               <input v-model="contactForm.phone" type="tel" required
@@ -128,14 +127,15 @@
 
             <button type="submit" :disabled="isSending"
               class="w-full bg-[#C9A961] hover:bg-amber-500 text-[#1A1A1A] font-bold text-xs uppercase tracking-widest py-4 rounded-xl transition flex justify-center items-center space-x-2 disabled:opacity-50">
-              <span v-if="isSending" class="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin"></span>
+              <span v-if="isSending"
+                class="w-4 h-4 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin"></span>
               <span>{{ isSending ? 'Mengirim...' : 'Kirim Pesan Sekarang' }}</span>
             </button>
           </form>
         </div>
       </div>
 
-     
+
 
     </div>
   </div>
@@ -179,16 +179,16 @@ const handleFormSubmit = async () => {
     // 1. Ambil token CSRF terlebih dahulu
     const token = await getCsrfToken();
 
-   const res = await fetch('/api/contact', {
+    const res = await fetch('/api/contact', {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'x-csrf-token': token // 2. Kirim token via header
       },
       credentials: 'include', // 3. Sertakan cookie agar validasi session binding berhasil
       body: JSON.stringify(contactForm)
     })
-    
+
     if (res.ok) {
       const data = await res.json()
       triggerToast(data.message)
@@ -205,7 +205,7 @@ const handleFormSubmit = async () => {
         const data = JSON.parse(text);
         errorMessage = data.message || errorMessage;
       } catch (e) { /* Respon bukan JSON */ }
-      
+
       triggerToast(errorMessage, "error")
     }
   } catch (err) {
@@ -218,6 +218,14 @@ const handleFormSubmit = async () => {
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(10px); }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
 </style>
