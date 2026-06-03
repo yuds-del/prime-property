@@ -59,6 +59,24 @@
         </p>
       </div>
 
+       <!-- Map Section (Baru ditambahkan) -->
+      <div class="mt-12 bg-zinc-900 p-4 rounded-2xl border border-zinc-800 shadow-2xl overflow-hidden">
+        <div class="mb-4 px-2">
+          <h3 class="text-[#C9A961] text-xs font-black uppercase tracking-widest">Lokasi Kantor Pusat</h3>
+        </div>
+        <div class="w-full h-80 rounded-xl overflow-hidden grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-700">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.275330368305!2d106.80629227585501!3d-6.227382060986794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f15049383637%3A0x6b4999f8d098e983!2sSCBD!5e0!3m2!1sid!2sid!4v1715850000000!5m2!1sid!2sid" 
+            width="100%" 
+            height="100%" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Info Kontak -->
         <div class="space-y-6">
@@ -117,23 +135,7 @@
         </div>
       </div>
 
-      <!-- Map Section (Baru ditambahkan) -->
-      <div class="mt-12 bg-zinc-900 p-4 rounded-2xl border border-zinc-800 shadow-2xl overflow-hidden">
-        <div class="mb-4 px-2">
-          <h3 class="text-[#C9A961] text-xs font-black uppercase tracking-widest">Lokasi Kantor Pusat</h3>
-        </div>
-        <div class="w-full h-80 rounded-xl overflow-hidden grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-700">
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.275330368305!2d106.80629227585501!3d-6.227382060986794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f15049383637%3A0x6b4999f8d098e983!2sSCBD!5e0!3m2!1sid!2sid!4v1715850000000!5m2!1sid!2sid" 
-            width="100%" 
-            height="100%" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy" 
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-        </div>
-      </div>
+     
 
     </div>
   </div>
